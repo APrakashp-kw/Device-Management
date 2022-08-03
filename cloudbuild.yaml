@@ -44,5 +44,5 @@ steps:
   - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
 # Push the image to Google Container Registry with the latest tag
 images: [
-    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-manager:$REVISION_ID'
+    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
   ]
