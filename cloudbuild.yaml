@@ -11,7 +11,7 @@ steps:
   args: [
     'build', 
     '-t', 
-    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-manager:$REVISION_ID',
+    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID',
    # '-t',
     #'gcr.io/famous-palisade-356103/device-mngr:latest',
     '.'
@@ -21,7 +21,7 @@ steps:
 - name: gcr.io/cloud-builders/docker
   args: [
     'push', 
-    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-manager:$REVISION_ID'
+    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
   ]
 # Step 3
 - name: 'gcr.io/cloud-builders/kubectl'
@@ -37,7 +37,7 @@ steps:
     'image', 
     'deployment', 
     'device-manager', 
-    'devicemngr=asia-east1-docker.pkg.dev/famous-palisade-356103/device-manager:$REVISION_ID'
+    'devicemngr=asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
   ]
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
