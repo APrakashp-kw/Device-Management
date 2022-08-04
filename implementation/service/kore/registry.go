@@ -32,6 +32,7 @@ func (r *registryIotService) CreateRegistry(_ context.Context, registry model.Re
 	Ping(r.ctx, r.client)
 	var filter interface{} = bson.D{
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: registry.Id}}}, {Key: "name", Value: bson.D{{Key: "$eq", Value: registry.Name}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	var queryResult model.RegistryCreate
 	err := queryOne(r.ctx, r.client, r.database, r.collection, filter).Decode(&queryResult)
@@ -77,6 +78,7 @@ func (r *registryIotService) UpdateRegistry(_ context.Context, registry model.Re
 	Ping(r.ctx, r.client)
 	var filter interface{} = bson.D{
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: registry.Id}}}, {Key: "name", Value: bson.D{{Key: "$eq", Value: registry.Name}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	var queryResult model.RegistryCreate
 	err := queryOne(r.ctx, r.client, r.database, r.collection, filter).Decode(&queryResult)
@@ -88,6 +90,7 @@ func (r *registryIotService) UpdateRegistry(_ context.Context, registry model.Re
 	}
 	filter = bson.D{
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: registry.Id}}}, {Key: "name", Value: bson.D{{Key: "$eq", Value: registry.Name}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	if registry.MqttConfig.MqttEnabledState != "" && strings.Contains(registry.UpdateMask, "mqtt_config") {
 		queryResult.MqttConfig.MqttEnabledState = registry.MqttConfig.MqttEnabledState
@@ -152,20 +155,34 @@ func DeleteRegPublish(topicId string, dev model.RegistryDelete) error {
 }
 func (r *registryIotService) DeleteRegistry(_ context.Context, registry model.RegistryDelete) (model.Response, error) {
 	Ping(r.ctx, r.client)
-	var filter interface{} = bson.D{
-		{Key: "name", Value: bson.D{{Key: "$eq", Value: registry.Parent}}},
+	filter := bson.D{{Key: "name", Value: bson.D{{Key: "$eq", Value: registry.Parent}}}, {Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}}}
+	var dr model.Response
+	var queryResult model.RegistryCreate
+	err := queryOne(r.ctx, r.client, r.database, r.collection, filter).Decode(&queryResult)
+	if queryResult.Id == "" {
+		log.Error().Msg("No Registry Found")
+		dr = model.Response{StatusCode: 404, Message: "Not Found"}
+		return dr, err
 	}
 
-	// Returns result of deletion and error
-	result, err := deleteOne(r.ctx, r.client, r.database, r.collection, filter)
+	// The field of the document that need to updated.
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "decomissioned", Value: true},
+		}},
+	}
+
+	// Returns result of updated document and a error.
+	updateResult, err := UpdateOne(r.ctx, r.client, r.database, r.collection, filter, update)
 	if err != nil {
 		log.Error().Err(err).Msg("")
 		dr := model.Response{StatusCode: 500, Message: err.Error()}
 		return dr, err
 	}
-	// print the count of affected documents
-	log.Info().Msg("No.of rows affected by DeleteOne()")
-	log.Info().Msg(fmt.Sprintf("%d", result.DeletedCount))
+
+	// print count of documents that affected
+	log.Info().Msg("Delete single document")
+	log.Info().Msg(fmt.Sprintf("%d", updateResult.ModifiedCount))
 	if r.Publish {
 		err = DeleteRegPublish(r.pubTopic, registry)
 		if err != nil {
@@ -173,13 +190,13 @@ func (r *registryIotService) DeleteRegistry(_ context.Context, registry model.Re
 			return dr, err
 		}
 	}
-	dr := model.Response{StatusCode: 200, Message: "Success"}
+	dr = model.Response{StatusCode: 200, Message: "Success"}
 	return dr, err
 }
 func (r *registryIotService) GetRegistry(_ context.Context, registry model.RegistryDelete) (model.Response, error) {
 	Ping(r.ctx, r.client)
 	var filter interface{} = bson.D{
-		{Key: "name", Value: bson.D{{Key: "$eq", Value: registry.Parent}}},
+		{Key: "name", Value: bson.D{{Key: "$eq", Value: registry.Parent}}}, {Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 
 	// Returns result of deletion and error
@@ -202,7 +219,7 @@ func (r *registryIotService) GetRegistry(_ context.Context, registry model.Regis
 func (r *registryIotService) GetRegistriesRegion(_ context.Context, registry model.RegistryDelete) (model.Response, error) {
 	Ping(r.ctx, r.client)
 	var filter interface{} = bson.D{
-		{Key: "parent", Value: bson.D{{Key: "$eq", Value: registry.Parent}}},
+		{Key: "parent", Value: bson.D{{Key: "$eq", Value: registry.Parent}}}, {Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 
 	// Returns result of deletion and error
@@ -239,7 +256,7 @@ func (r *registryIotService) GetRegistriesRegion(_ context.Context, registry mod
 func (r *registryIotService) GetRegistries(_ context.Context, registry model.RegistryDelete) (model.Response, error) {
 	Ping(r.ctx, r.client)
 	var filter interface{} = bson.D{
-		{Key: "project", Value: bson.D{{Key: "$eq", Value: registry.Project}}},
+		{Key: "project", Value: bson.D{{Key: "$eq", Value: registry.Project}}}, {Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 
 	// Returns result of deletion and error

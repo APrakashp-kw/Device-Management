@@ -38,6 +38,7 @@ func (d *deviceIotService) CreateDevice(_ context.Context, dev model.DeviceCreat
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: dev.Registry}}},
 		{Key: "region", Value: bson.D{{Key: "$eq", Value: dev.Region}}},
 		{Key: "project", Value: bson.D{{Key: "$eq", Value: dev.Project}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	var rqueryResult model.RegistryCreate
 	var dr model.Response
@@ -50,6 +51,7 @@ func (d *deviceIotService) CreateDevice(_ context.Context, dev model.DeviceCreat
 
 	var filter interface{} = bson.D{
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: dev.Id}}}, {Key: "name", Value: bson.D{{Key: "$eq", Value: dev.Name}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	var queryResult model.DeviceCreate
 	err = queryOne(d.ctx, d.client, d.database, d.dcollection, filter).Decode(&queryResult)
@@ -121,6 +123,7 @@ func (d *deviceIotService) UpdateDevice(_ context.Context, dev model.DeviceUpdat
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: dev.Registry}}},
 		{Key: "region", Value: bson.D{{Key: "$eq", Value: dev.Region}}},
 		{Key: "project", Value: bson.D{{Key: "$eq", Value: dev.Project}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	var rqueryResult model.RegistryCreate
 	var dr model.Response
@@ -133,6 +136,7 @@ func (d *deviceIotService) UpdateDevice(_ context.Context, dev model.DeviceUpdat
 
 	var filter interface{} = bson.D{
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: dev.Id}}}, {Key: "name", Value: bson.D{{Key: "$eq", Value: dev.Name}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	var queryResult model.DeviceCreate
 	err = queryOne(d.ctx, d.client, d.database, d.dcollection, filter).Decode(&queryResult)
@@ -170,6 +174,7 @@ func (d *deviceIotService) UpdateDevice(_ context.Context, dev model.DeviceUpdat
 	}
 	filter = bson.D{
 		{Key: "id", Value: bson.D{{Key: "$eq", Value: dev.Id}}}, {Key: "name", Value: bson.D{{Key: "$eq", Value: dev.Name}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 	if strings.Contains(dev.UpdateMask, "blocked") {
 		queryResult.Blocked = dev.Blocked
@@ -231,18 +236,34 @@ func (d *deviceIotService) DeleteDevice(_ context.Context, dev model.DeviceDelet
 	Ping(d.ctx, d.client)
 	var filter interface{} = bson.D{
 		{Key: "name", Value: bson.D{{Key: "$eq", Value: dev.Parent}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
+	}
+	var queryResult model.DeviceCreate
+	var dr model.Response
+	err := queryOne(d.ctx, d.client, d.database, d.dcollection, filter).Decode(&queryResult)
+	if queryResult.Id == "" {
+		log.Error().Msg("No Device Found")
+		dr = model.Response{StatusCode: 404, Message: "Not Found"}
+		return dr, err
 	}
 
-	// Returns result of deletion and error
-	result, err := deleteOne(d.ctx, d.client, d.database, d.dcollection, filter)
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "decomissioned", Value: true},
+		}},
+	}
+
+	// Returns result of updated document and a error.
+	updateResult, err := UpdateOne(d.ctx, d.client, d.database, d.dcollection, filter, update)
 	if err != nil {
 		log.Error().Err(err).Msg("")
 		dr := model.Response{StatusCode: 500, Message: err.Error()}
 		return dr, err
 	}
-	// print the count of affected documents
-	log.Info().Msg("No.of rows affected by DeleteOne()")
-	log.Info().Msg(fmt.Sprintf("%d", result.DeletedCount))
+
+	// print count of documents that affected
+	log.Info().Msg("Delete Single Device")
+	log.Info().Msg(fmt.Sprintf("%d", updateResult.ModifiedCount))
 	if d.Publish {
 		err = DeleteDevicePublish(d.pubTopic, dev)
 		if err != nil {
@@ -250,13 +271,14 @@ func (d *deviceIotService) DeleteDevice(_ context.Context, dev model.DeviceDelet
 			return dr, err
 		}
 	}
-	dr := model.Response{StatusCode: 200, Message: "Success"}
+	dr = model.Response{StatusCode: 200, Message: "Success"}
 	return dr, err
 }
 func (d *deviceIotService) GetDevice(_ context.Context, dev model.DeviceDelete) (model.Response, error) {
 	Ping(d.ctx, d.client)
 	var filter interface{} = bson.D{
 		{Key: "name", Value: bson.D{{Key: "$eq", Value: dev.Parent}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 
 	// Returns result of deletion and error
@@ -280,6 +302,7 @@ func (d *deviceIotService) GetDevices(_ context.Context, dev model.DeviceDelete)
 	Ping(d.ctx, d.client)
 	var filter interface{} = bson.D{
 		{Key: "parent", Value: bson.D{{Key: "$eq", Value: dev.Parent}}},
+		{Key: "decomissioned", Value: bson.D{{Key: "$eq", Value: false}}},
 	}
 
 	// Returns result of deletion and error
