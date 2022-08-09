@@ -37,7 +37,7 @@ steps:
   - 'pipefail'
   - '-c'
   - |
-    gcloud artifacts docker images scan 'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:8f80dbdcb70ce605ceb1df3ca2253e8097de7e7d' --format='value(response.scan)' > scan_id.txt
+    gcloud artifacts docker images scan 'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:8f80dbdcb70ce605ceb1df3ca2253e8097de7e7d' --remote --format='value(response.scan)' > scan_id.txt
     gcloud artifacts docker images list-vulnerabilities $(cat scan_id.txt) --format='table(vulnerability.effectiveSeverity, vulnerability.cvssScore, noteName, vulnerability.packageIssue[0].affectedPackage, vulnerability.packageIssue[0].affectedVersion.name, vulnerability.packageIssue[0].fixedVersion.name)'
     gcloud artifacts docker images list-vulnerabilities $(cat scan_id.txt) --format='value(vulnerability.effectiveSeverity)' | if grep -Fxq CRITICAL; then echo 'Failed vulnerability check' && exit 1; else exit 0; fi
 
