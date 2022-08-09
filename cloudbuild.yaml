@@ -17,6 +17,18 @@ steps:
     '.'
   ]
 #dir: 'my-app-vue'
+#####################
+# Step 2.0
+- name: gcr.io/cloud-builders/gcloud
+  args: [
+    'artifacts', 
+    'docker', 
+    'images', 
+    'scan', 
+    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID',
+    '--additional-package-types=GO'
+  ]
+#####################
 # Step 2.2
 - name: gcr.io/cloud-builders/docker
   args: [
