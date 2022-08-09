@@ -7,15 +7,15 @@ steps:
    # 'docker pull gcr.io/famous-palisade-356103/device-mngr:latest || exit 0'
   #]
 # Step 2
-- name: gcr.io/cloud-builders/docker
-  args: [
-    'build', 
-    '-t', 
-    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID',
-   # '-t',
-    #'gcr.io/famous-palisade-356103/device-mngr:latest',
-    '.'
-  ]
+# - name: gcr.io/cloud-builders/docker
+#   args: [
+#     'build', 
+#     '-t', 
+#     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID',
+#    # '-t',
+#     #'gcr.io/famous-palisade-356103/device-mngr:latest',
+#     '.'
+#   ]
 #dir: 'my-app-vue'
 #####################
 # Step 2.0
