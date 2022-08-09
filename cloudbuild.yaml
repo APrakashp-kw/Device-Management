@@ -45,8 +45,6 @@ steps:
   name: gcr.io/cloud-builders/gcloud
   entrypoint: 'bash'
   args:
-  - '-eEuo'
-  - 'pipefail'
   - '-c'
   - |
     gcloud artifacts docker images list-vulnerabilities $(cat scan_id.txt) --format='table(vulnerability.effectiveSeverity, vulnerability.cvssScore, noteName, vulnerability.packageIssue[0].affectedPackage, vulnerability.packageIssue[0].affectedVersion.name, vulnerability.packageIssue[0].fixedVersion.name)'
