@@ -17,6 +17,26 @@ steps:
      '.'
    ]
 #dir: 'my-app-vue'
+
+###
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: 
+  - 'build'
+  - '--build-arg'
+  - 'SONARQUBE_SCANNER_CLI_VERSION=4.7.0.2747'
+  - '-t'
+  - 'gcr.io/famous-palisade-356103/sonar-scanner:latest'
+  - '-t'
+  - 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
+  - '.'
+
+images: 
+- 'gcr.io/famous-palisade-356103/sonar-scanner:latest'
+- 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
+
+tags: ['cloud-builders-community']
+###
 #####################
 # Step 2.0
 # - name: gcr.io/cloud-builders/gcloud
