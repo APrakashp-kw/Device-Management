@@ -59,7 +59,7 @@ steps:
 #     --format='value(response.scan)' > /workspace/scan_id.txt
 
 #steps: 
-- name: "gcr.io/PROJECT_ID/sonar-scanner:latest"
+- name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"
   args: 
     - "-Dsonar.host.url=https://sonarqube.cloud.korewireless.com"
     - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
