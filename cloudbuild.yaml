@@ -6,7 +6,7 @@ steps:
     #'-c', 
    # 'docker pull gcr.io/famous-palisade-356103/device-mngr:latest || exit 0'
   #]
-Step 2
+#Step 2
 - name: gcr.io/cloud-builders/docker
   args: [
     'build', 
