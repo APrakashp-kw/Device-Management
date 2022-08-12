@@ -1,12 +1,5 @@
 steps:
 # Step 1
-#- name: 'gcr.io/cloud-builders/docker'
-  #entrypoint: 'bash'
-  #args: [
-    #'-c', 
-   # 'docker pull gcr.io/famous-palisade-356103/device-mngr:latest || exit 0'
-  #]
-#Step 2
 - name: gcr.io/cloud-builders/docker
   args: [
     'build', 
@@ -17,9 +10,6 @@ steps:
      '.'
    ]
 #dir: 'my-app-vue'
-
-###
-steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: 
   - 'build'
@@ -30,54 +20,11 @@ steps:
   - '-t'
   - 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
   - '.'
-
-  images: 
-  - 'gcr.io/famous-palisade-356103/sonar-scanner:latest'
-  - 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
-
-  tags: ['cloud-builders-community']
+images: 
+- 'gcr.io/famous-palisade-356103/sonar-scanner:latest'
+- 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
+tags: ['cloud-builders-community']
 ###
-#####################
-# Step 2.0
-# - name: gcr.io/cloud-builders/gcloud
-#   args: [
-#     'artifacts', 
-#     'docker', 
-#     'images', 
-#     'scan', 
-#     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID',
-#     '--additional-package-types=GO'
-#   ]
-#####################
-#- id: container scanning
-#  name: gcr.io/cloud-builders/gcloud
-#  entrypoint: 'bash'
-#  args:
-#  - '-eEuo'
-#  - 'pipefail'
-#  - '-c'
-#  - |
-#    gcloud artifacts docker images scan 'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:8f80dbdcb70ce605ceb1df3ca2253e8097de7e7d' --remote --format='value(response.scan)' > scan_id.txt
-#    gcloud artifacts docker images list-vulnerabilities $(cat scan_id.txt) --format='table(vulnerability.effectiveSeverity, vulnerability.cvssScore, noteName, vulnerability.packageIssue[0].affectedPackage, vulnerability.packageIssue[0].affectedVersion.name, vulnerability.packageIssue[0].fixedVersion.name)'
-#    gcloud artifacts docker images list-vulnerabilities $(cat scan_id.txt) --format='value(vulnerability.effectiveSeverity)' | if grep -Fxq CRITICAL; then echo 'Failed vulnerability check' && exit 1; else exit 0; fi
-    
-#- id: container listing 
-#  name: gcr.io/cloud-builders/gcloud
-#  entrypoint: 'bash'
-#  args:
-#  - '-c'
-#  - |
-#    gcloud artifacts docker images list-vulnerabilities $(cat scan_id.txt) --format='table(vulnerability.effectiveSeverity, vulnerability.cvssScore, noteName, vulnerability.packageIssue[0].affectedPackage, vulnerability.packageIssue[0].affectedVersion.name, vulnerability.packageIssue[0].fixedVersion.name)'
-#    gcloud artifacts docker images list-vulnerabilities $(cat scan_id.txt) --format='value(vulnerability.effectiveSeverity)' | if grep -Fxq CRITICAL; then echo 'Failed vulnerability check' && exit 1; else exit 0; fi
-
-# - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-#   entrypoint: /bin/bash
-#   args:
-#   - -c
-#   - |
-#     gcloud artifacts docker images scan us-central1-docker.pkg.dev/$_PROJECT_ID/ods-build-repo/ods-test:latest \
-#     --format='value(response.scan)' > /workspace/scan_id.txt
-
 #steps: 
 - name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"
   args: 
