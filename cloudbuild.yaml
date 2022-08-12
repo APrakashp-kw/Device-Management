@@ -1,5 +1,13 @@
 steps:
 # Step 1
+#steps: 
+- name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
+  args: 
+    - "-Dsonar.host.url=https://sonarqube.cloud.korewireless.com"
+    - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
+    - "-Dsonar.projectKey=gcp-device-mgmnt"
+    - "-Dsonar.sources=."
+#steps:     
 - name: gcr.io/cloud-builders/docker
   args: [
     'build', 
@@ -10,14 +18,6 @@ steps:
      '.'
    ]
 #dir: 'my-app-vue'
-###
-#steps: 
-- name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
-  args: 
-    - "-Dsonar.host.url=https://sonarqube.cloud.korewireless.com"
-    - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
-    - "-Dsonar.projectKey=gcp-device-mgmnt"
-    - "-Dsonar.sources=."
 # Step 2.2
 - name: gcr.io/cloud-builders/docker
   args: [
