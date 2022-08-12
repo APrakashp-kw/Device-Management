@@ -57,6 +57,14 @@ steps:
 #   - |
 #     gcloud artifacts docker images scan us-central1-docker.pkg.dev/$_PROJECT_ID/ods-build-repo/ods-test:latest \
 #     --format='value(response.scan)' > /workspace/scan_id.txt
+
+#steps: 
+- name: "gcr.io/PROJECT_ID/sonar-scanner:latest"
+  args: 
+    - "-Dsonar.host.url=https://sonarqube.cloud.korewireless.com"
+    - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
+    - "-Dsonar.projectKey=gcp-device-mgmnt"
+    - "-Dsonar.sources=."
 # Step 2.2
 - name: gcr.io/cloud-builders/docker
   args: [
