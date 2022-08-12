@@ -31,11 +31,11 @@ steps:
   - 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
   - '.'
 
-images: 
-- 'gcr.io/famous-palisade-356103/sonar-scanner:latest'
-- 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
+  images: 
+  - 'gcr.io/famous-palisade-356103/sonar-scanner:latest'
+  - 'gcr.io/famous-palisade-356103/sonar-scanner:4.7.0.2747'
 
-tags: ['cloud-builders-community']
+  tags: ['cloud-builders-community']
 ###
 #####################
 # Step 2.0
