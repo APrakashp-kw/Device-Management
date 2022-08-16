@@ -7,6 +7,19 @@ steps:
     - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
     - "-Dsonar.projectKey=gcp-device-mgmnt"
     - "-Dsonar.sources=."
+# Run security tests
+- name: securego/gosec
+  env:
+  - 'GO111MODULE=on'
+  args:
+  - -no-fail #don't fail the build
+  - ./...
+  volumes:
+  - name: 'go-modules'
+    path: /go
+  #id: 'security-tests'
+  #waitFor: ['unit-tests'] #wait for another step to finish
+  
 #steps:     
 - name: gcr.io/cloud-builders/docker
   args: [
