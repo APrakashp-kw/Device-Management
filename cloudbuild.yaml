@@ -1,27 +1,27 @@
 steps:
 # Step 1
 #steps: 
-- name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
+- id: 'Sonar Quality Check'
+  name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
   args: 
     - "-Dsonar.host.url=https://sonarqube.cloud.korewireless.com"
     - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
     - "-Dsonar.projectKey=gcp-device-mgmnt"
     - "-Dsonar.sources=."
-# Run security tests
-- name: securego/gosec
-  env:
-  - 'GO111MODULE=on'
-  args:
-  - -no-fail #don't fail the build
-  - ./...
-  volumes:
-  - name: 'go-modules'
-    path: /go
-  #id: 'security-tests'
-  #waitFor: ['unit-tests'] #wait for another step to finish
+####    
+- id: 'Go Lint qualicy Check'
+  name: "golangci/golangci-lint"
+  args: ["golangci-lint","run"]
+
+- id: 'GoSec Security Checks'
+  name: "securego/gosec"
+  args: ['app']
+  env: ['GOPATH=.']
+####
   
 #steps:     
-- name: gcr.io/cloud-builders/docker
+- id: 'Docker Build'
+  name: gcr.io/cloud-builders/docker
   args: [
     'build', 
     '-t', 
@@ -32,20 +32,23 @@ steps:
    ]
 #dir: 'my-app-vue'
 # Step 2.2
-- name: gcr.io/cloud-builders/docker
+- id: 'Push to Google ACR'
+  name: gcr.io/cloud-builders/docker
   args: [
     'push', 
     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
   ]
 # Step 3
-- name: 'gcr.io/cloud-builders/kubectl'
+- id: 'Deploy to K8s'
+  name: 'gcr.io/cloud-builders/kubectl'
   args: ['apply', '-f', 'k8s/']
   #args: ['apply', '-f', '*.yaml']
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
 # Step 4
-- name: 'gcr.io/cloud-builders/kubectl'
+- id: 'K8s deployment Image Replace'
+  name: 'gcr.io/cloud-builders/kubectl'
   args: [
     'set', 
     'image', 
