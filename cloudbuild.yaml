@@ -9,10 +9,10 @@ steps:
     - "-Dsonar.projectKey=gcp-device-mgmnt"
     - "-Dsonar.sources=."
 ####    
-- id: 'Go Lint qualicy Check'
-  name: "golangci/golangci-lint"
-  args: ["golangci-lint","run"]
-
+#- id: 'Go Lint qualicy Check'
+#  name: "golangci/golangci-lint"
+#  args: ["golangci-lint","run"]
+#
 - id: 'GoSec Security Checks'
   name: "securego/gosec"
   args: ['app']
