@@ -1,10 +1,4 @@
 steps:
-# Step 1
-#steps: 
-- id: 'run quality test'
-  name: "golangci/golangci-lint"
-  args: ["golangci-lint","run"]
-
 - id: 'GoSec Security Checks'
   name: "securego/gosec"
   args: 
