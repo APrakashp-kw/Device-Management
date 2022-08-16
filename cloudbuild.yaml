@@ -1,6 +1,11 @@
 steps:
 # Step 1
 #steps: 
+- id: 'GoSec Security Checks'
+  name: "securego/gosec"
+  args: ['app']
+  env: ['GOPATH=.']
+  
 - id: 'Sonar Quality Check'
   name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
   args: 
@@ -13,11 +18,7 @@ steps:
 #  name: "golangci/golangci-lint"
 #  args: ["golangci-lint","run"]
 #
-- id: 'GoSec Security Checks'
-  name: "securego/gosec"
-  args: ['app']
-  env: ['GOPATH=.']
-####
+
   
 #steps:     
 - id: 'Docker Build'
