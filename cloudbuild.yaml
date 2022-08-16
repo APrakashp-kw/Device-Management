@@ -3,8 +3,24 @@ steps:
 #steps: 
 - id: 'GoSec Security Checks'
   name: "securego/gosec"
-  args: ['app']
+  args: ['.']
   env: ['GOPATH=.']
+  
+#   name: securego/gosec
+#   env:
+#   - 'GO111MODULE=on'
+#   args:
+#   - -no-fail #don't fail the build
+#   - ./...
+#   volumes:
+#   - name: 'go-modules'
+#     path: /go
+#   id: 'security-tests'
+#   waitFor: ['unit-tests'] #wait for another step to finish
+  
+  
+  
+  
   
 - id: 'Sonar Quality Check'
   name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
