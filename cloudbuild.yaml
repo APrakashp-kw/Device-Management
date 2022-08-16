@@ -2,8 +2,9 @@ steps:
 - id: 'GoSec Security Checks'
   name: "securego/gosec"
   args: 
-  - ./...
   - -no-fail       #don't fail the build in this step
+  - ./...
+  
 
 #env: ['GOPATH=app']
 #   env:
