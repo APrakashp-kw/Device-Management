@@ -3,8 +3,8 @@ steps:
 #steps: 
 - id: 'GoSec Security Checks'
   name: "securego/gosec"
-  args: ['/app']
-  env: ['GOPATH=.']
+  args: ['app']
+  env: ['GOPATH=app/main.go']
   
 #   name: securego/gosec
 #   env:
