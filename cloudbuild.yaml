@@ -1,9 +1,9 @@
 steps:
-- id: 'GoSec Security Checks'
-  name: "securego/gosec"
-  args: 
-  - -no-fail       #don't fail the build in this step
-  - ./...
+# - id: 'GoSec Security Checks'
+#   name: "securego/gosec"
+#   args: 
+#   - -no-fail       #don't fail the build in this step
+#   - ./...
   
 
 #env: ['GOPATH=app']
@@ -13,13 +13,13 @@ steps:
 #   - -no-fail #don't fail the build
 #   - ./...  
 
-- id: 'Sonarqube Quality Check'
-  name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
-  args: 
-    - "-Dsonar.host.url=https://sonarqube.cloud.korewireless.com"
-    - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
-    - "-Dsonar.projectKey=gcp-device-mgmnt"
-    - "-Dsonar.sources=."
+# - id: 'Sonarqube Quality Check'
+#   name: "gcr.io/famous-palisade-356103/sonar-scanner:latest"   
+#   args: 
+#     - "-Dsonar.host.url=https://sonarqube.cloud.korewireless.com"
+#     - "-Dsonar.login=a902b22d7e41d5b9ec9e983c6e17cde783053e4d"
+#     - "-Dsonar.projectKey=gcp-device-mgmnt"
+#     - "-Dsonar.sources=."
   
 #steps:     
 - id: 'Docker Build'
