@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-manager
+  namespace: default
+  labels:
+    app: device-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: device-manager
+  template:
+    metadata:
+      labels:
+        app: device-manager
+    spec:
+      serviceAccountName: device-ksa
+      containers:
+      - name: devicemngr
+        image: asia-east1-docker.pkg.dev/control-plane-358307/device-manager:$REVISION_ID
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ENV_AUTH_SERVER
+          value: ":8091"
+        - name: ENV_DEBUG
+          value: "true"
+        - name: ENV_DB_TYPE
+          value: "mongo"
+        - name: ENV_MONGO_CS
+          value: "mongodb+srv://shaiz:12345@cluster0.r92aosl.mongodb.net/?retryWrites=true&w=majority"
+        - name: ENV_MONGO_DB
+          value: "test"
+        - name: ENV_REGISTRY_COLLECTION
+          value: "Reg"
+        - name: ENV_DEVICE_COLLECTION
+          value: "Dev"
+        - name: ENV_PUB_TOPIC
+          value: "test"
+        - name: ENV_PUBLISH
+          value: "true"
+  #    imagePullSecrets:
+   #     - name: topsecret
