@@ -40,27 +40,42 @@ steps:
     'push', 
     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
   ]
-# Step 3
-- id: 'Deploy to K8s'
-  name: 'gcr.io/cloud-builders/kubectl'
-  args: ['apply', '-f', 'k8s/']
-  #args: ['apply', '-f', '*.yaml']
+# # Step 3
+# - id: 'Deploy to K8s'
+#   name: 'gcr.io/cloud-builders/kubectl'
+#   args: ['apply', '-f', 'k8s/']
+#   #args: ['apply', '-f', '*.yaml']
+#   env:
+#   - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
+#   - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
+  
+- id: 'Helm Deploy'
+  name: 'gcr.io/$PROJECT_ID/cloud-builders-helm'
+  args: 
+    - upgrade 
+    - -i
+    - model-mgmnt
+    - ./Helm/model-mgmnt
+  #dir: 'Helm/model-mgmnt'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
-# Step 4
-- id: 'K8s deployment Image Replace'
-  name: 'gcr.io/cloud-builders/kubectl'
-  args: [
-    'set', 
-    'image', 
-    'deployment', 
-    'device-manager', 
-    'devicemngr=asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
-  ]
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
+  
+  ###########
+# # Step 4
+# - id: 'K8s deployment Image Replace'
+#   name: 'gcr.io/cloud-builders/kubectl'
+#   args: [
+#     'set', 
+#     'image', 
+#     'deployment', 
+#     'device-manager', 
+#     'devicemngr=asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
+#   ]
+#   env:
+#   - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
+#   - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
+  ###########
 # Push the image to Google Container Registry with the latest tag
 images: [
     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
