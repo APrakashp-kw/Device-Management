@@ -50,7 +50,7 @@ steps:
 #   - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
   
 - id: 'Helm Deploy'
-  name: 'gcr.io/$PROJECT_ID/cloud-builders-helm'
+  name: 'gcr.io/famous-palisade-356103/cloud-builders-helm'
   args: 
     - upgrade 
     - -i
