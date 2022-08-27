@@ -21,25 +21,25 @@ steps:
 #     - "-Dsonar.projectKey=gcp-device-mgmnt"
 #     - "-Dsonar.sources=."
   
-steps:     
-- id: 'Docker Build'
-  name: gcr.io/cloud-builders/docker
-  args: [
-    'build', 
-    '-t', 
-    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID',
-     '-t',
-     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:latest',
-     '.'
-   ]
+# steps:     
+# - id: 'Docker Build'
+#   name: gcr.io/cloud-builders/docker
+#   args: [
+#     'build', 
+#     '-t', 
+#     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID',
+#      '-t',
+#      'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:latest',
+#      '.'
+#    ]
 #dir: 'my-app-vue'
 # Step 2.2
-- id: 'Push to Google ACR'
-  name: gcr.io/cloud-builders/docker
-  args: [
-    'push', 
-    'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
-  ]
+# - id: 'Push to Google ACR'
+#   name: gcr.io/cloud-builders/docker
+#   args: [
+#     'push', 
+#     'asia-east1-docker.pkg.dev/famous-palisade-356103/device-management/device-mgr:$REVISION_ID'
+#   ]
 # # Step 3
 # - id: 'Deploy to K8s'
 #   name: 'gcr.io/cloud-builders/kubectl'
@@ -55,8 +55,9 @@ steps:
     - upgrade 
     - -i
     - model-mgmnt
+    - --set 
+    - image.tag=${REVISION_ID}
     - ./Helm/model-mgmnt
-    - --set image.tag=${REVISION_ID}
   #dir: 'Helm/model-mgmnt'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
