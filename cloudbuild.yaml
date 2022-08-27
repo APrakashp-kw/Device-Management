@@ -56,11 +56,11 @@ steps:
     - -i
     - model-mgmnt
     - ./Helm/model-mgmnt
+    - --set image.tag=${REVISION_ID}
   #dir: 'Helm/model-mgmnt'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=device-manager'
-  
   ###########
 # # Step 4
 # - id: 'K8s deployment Image Replace'
